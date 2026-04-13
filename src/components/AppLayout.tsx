@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Bell, Users, Menu, X, Activity } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { LayoutDashboard, Bell, Users, Menu, X, Activity, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -11,7 +11,13 @@ const navItems = [
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    navigate("/login");
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -85,6 +91,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <span className="text-xs bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium">
               Admin
             </span>
+            <button onClick={handleLogout} className="p-2 text-muted-foreground hover:text-foreground transition-colors" title="Logout">
+              <LogOut className="h-4 w-4" />
+            </button>
           </div>
         </header>
 
