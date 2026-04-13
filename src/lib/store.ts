@@ -3,6 +3,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 export type MachineStatus = "Running" | "Warning" | "Fault";
 export type Severity = "Low" | "Medium" | "Critical";
 export type CallStatus = "Idle" | "Calling" | "Connected" | "Failed";
+export type SmsStatus = "Idle" | "Sending" | "Sent" | "Failed";
 
 export interface SensorData {
   temperature: number;
@@ -43,6 +44,14 @@ export interface CallEscalation {
   status: CallStatus;
 }
 
+export interface SmsEscalation {
+  engineerId: string;
+  engineerName: string;
+  machineId: string;
+  status: SmsStatus;
+  message: string;
+}
+
 const randomBetween = (min: number, max: number) =>
   Math.round((Math.random() * (max - min) + min) * 10) / 10;
 
@@ -75,6 +84,7 @@ export function useMachines() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [engineers, setEngineers] = useState<Engineer[]>(initialEngineers);
   const [callEscalation, setCallEscalation] = useState<CallEscalation | null>(null);
+  const [smsEscalation, setSmsEscalation] = useState<SmsEscalation | null>(null);
   const [newAlert, setNewAlert] = useState<Alert | null>(null);
   const [criticalAlert, setCriticalAlert] = useState<Alert | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
@@ -125,13 +135,6 @@ export function useMachines() {
         setNewAlert(alert);
       } else if (severity === "Critical") {
         setCriticalAlert(alert);
-        // Trigger call escalation
-        const engineer = initialEngineers.find((e) => e.assignedMachines.includes(machine.id));
-        if (engineer) {
-          setCallEscalation({ engineerId: engineer.id, engineerName: engineer.name, machineId: machine.id, status: "Calling" });
-          setTimeout(() => setCallEscalation((prev) => prev ? { ...prev, status: "Connected" } : null), 4000);
-          setTimeout(() => setCallEscalation(null), 8000);
-        }
       }
     }
   }, []);
@@ -166,7 +169,25 @@ export function useMachines() {
   const dismissCritical = useCallback(() => setCriticalAlert(null), []);
   const dismissToast = useCallback(() => setNewAlert(null), []);
 
-  return { machines, alerts, engineers, callEscalation, newAlert, criticalAlert, addEngineer, updateEngineer, assignMachine, dismissCritical, dismissToast };
+  const triggerCall = useCallback((machineId: string) => {
+    const engineer = engineers.find((e) => e.assignedMachines.includes(machineId));
+    if (engineer) {
+      setCallEscalation({ engineerId: engineer.id, engineerName: engineer.name, machineId, status: "Calling" });
+      setTimeout(() => setCallEscalation((prev) => prev ? { ...prev, status: "Connected" } : null), 4000);
+      setTimeout(() => setCallEscalation(null), 8000);
+    }
+  }, [engineers]);
+
+  const triggerSms = useCallback((machineId: string, message: string) => {
+    const engineer = engineers.find((e) => e.assignedMachines.includes(machineId));
+    if (engineer) {
+      setSmsEscalation({ engineerId: engineer.id, engineerName: engineer.name, machineId, status: "Sending", message });
+      setTimeout(() => setSmsEscalation((prev) => prev ? { ...prev, status: "Sent" } : null), 2000);
+      setTimeout(() => setSmsEscalation(null), 5000);
+    }
+  }, [engineers]);
+
+  return { machines, alerts, engineers, callEscalation, smsEscalation, newAlert, criticalAlert, addEngineer, updateEngineer, assignMachine, dismissCritical, dismissToast, triggerCall, triggerSms };
 }
 
 // Sensor history for charts
