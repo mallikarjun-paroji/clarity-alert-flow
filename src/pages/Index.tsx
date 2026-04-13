@@ -1,16 +1,44 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import MachineCard from "@/components/MachineCard";
+import AlertList from "@/components/AlertList";
+import CallEscalationPanel from "@/components/CallEscalationPanel";
+import ToastAlert from "@/components/ToastAlert";
+import CriticalModal from "@/components/CriticalModal";
+import { useMachines } from "@/lib/store";
+import AppLayout from "@/components/AppLayout";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+export default function Index() {
+  const { machines, alerts, callEscalation, newAlert, criticalAlert, dismissCritical, dismissToast } = useMachines();
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
+    <AppLayout>
+      <ToastAlert alert={newAlert} onDismiss={dismissToast} />
+      <CriticalModal alert={criticalAlert} onDismiss={dismissCritical} />
+
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Main Content */}
+        <div className="flex-1 space-y-6">
+          {/* Call Escalation */}
+          <CallEscalationPanel escalation={callEscalation} />
+
+          {/* Machine Grid */}
+          <div>
+            <h2 className="font-heading font-semibold text-lg text-foreground mb-4">Machine Overview</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {machines.map((m) => (
+                <MachineCard key={m.id} machine={m} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Alert Sidebar */}
+        <div className="lg:w-80 shrink-0">
+          <div className="card-elevated p-4">
+            <h3 className="font-heading font-semibold text-foreground mb-3">Recent Alerts</h3>
+            <AlertList alerts={alerts.slice(0, 20)} />
+          </div>
+        </div>
+      </div>
+    </AppLayout>
   );
-};
-
-const Index = PlaceholderIndex;
-
-export default Index;
+}
