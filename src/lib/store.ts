@@ -169,7 +169,25 @@ export function useMachines() {
   const dismissCritical = useCallback(() => setCriticalAlert(null), []);
   const dismissToast = useCallback(() => setNewAlert(null), []);
 
-  return { machines, alerts, engineers, callEscalation, newAlert, criticalAlert, addEngineer, updateEngineer, assignMachine, dismissCritical, dismissToast };
+  const triggerCall = useCallback((machineId: string) => {
+    const engineer = engineers.find((e) => e.assignedMachines.includes(machineId));
+    if (engineer) {
+      setCallEscalation({ engineerId: engineer.id, engineerName: engineer.name, machineId, status: "Calling" });
+      setTimeout(() => setCallEscalation((prev) => prev ? { ...prev, status: "Connected" } : null), 4000);
+      setTimeout(() => setCallEscalation(null), 8000);
+    }
+  }, [engineers]);
+
+  const triggerSms = useCallback((machineId: string, message: string) => {
+    const engineer = engineers.find((e) => e.assignedMachines.includes(machineId));
+    if (engineer) {
+      setSmsEscalation({ engineerId: engineer.id, engineerName: engineer.name, machineId, status: "Sending", message });
+      setTimeout(() => setSmsEscalation((prev) => prev ? { ...prev, status: "Sent" } : null), 2000);
+      setTimeout(() => setSmsEscalation(null), 5000);
+    }
+  }, [engineers]);
+
+  return { machines, alerts, engineers, callEscalation, smsEscalation, newAlert, criticalAlert, addEngineer, updateEngineer, assignMachine, dismissCritical, dismissToast, triggerCall, triggerSms };
 }
 
 // Sensor history for charts
