@@ -23,13 +23,16 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed z-40 inset-y-0 left-0 w-60 bg-card border-r border-border flex flex-col transition-transform duration-300 md:translate-x-0 md:static md:z-auto",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed z-40 inset-y-0 left-0 w-60 bg-card border-r border-border flex flex-col transition-all duration-300 md:static md:z-auto",
+          sidebarOpen ? "md:w-60 translate-x-0" : "md:w-0 md:overflow-hidden -translate-x-full md:translate-x-0"
         )}
       >
-        <div className="flex items-center gap-2 px-5 py-5 border-b border-border">
-          <Activity className="h-6 w-6 text-primary" />
-          <span className="font-heading font-semibold text-lg text-foreground">PredictAI</span>
+        <div
+          className="flex items-center gap-2 px-5 py-5 border-b border-border cursor-pointer select-none"
+          onClick={() => setSidebarOpen((prev) => !prev)}
+        >
+          <Activity className="h-6 w-6 text-primary shrink-0" />
+          <span className="font-heading font-semibold text-lg text-foreground whitespace-nowrap">PredictAI</span>
         </div>
 
         <nav className="flex-1 p-3 space-y-1">
@@ -39,7 +42,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <Link
                 key={item.path}
                 to={item.path}
-                onClick={() => setSidebarOpen(false)}
+                onClick={() => { if (window.innerWidth < 768) setSidebarOpen(false); }}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
                   active
@@ -54,7 +57,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="p-4 border-t border-border text-xs text-muted-foreground">
+        <div className="p-4 border-t border-border text-xs text-muted-foreground whitespace-nowrap">
           AI Predictive Maintenance v1.0
         </div>
       </aside>
@@ -66,6 +69,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <button className="md:hidden p-2 -ml-2 text-foreground" onClick={() => setSidebarOpen(!sidebarOpen)}>
             {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
+          {!sidebarOpen && (
+            <button
+              className="hidden md:flex items-center gap-2 p-2 -ml-2 text-foreground hover:text-primary transition-colors"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Activity className="h-5 w-5 text-primary" />
+              <span className="font-heading font-semibold text-sm">PredictAI</span>
+            </button>
+          )}
           <h1 className="font-heading font-semibold text-foreground hidden md:block">
             Predictive Maintenance Dashboard
           </h1>
