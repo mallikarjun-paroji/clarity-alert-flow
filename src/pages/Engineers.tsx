@@ -1,22 +1,21 @@
 import { useState } from "react";
 import AppLayout from "@/components/AppLayout";
-import { useMachines, Engineer } from "@/lib/store";
+import { useStore, Engineer } from "@/lib/StoreContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus, Pencil, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Engineers() {
-  const { engineers, machines, addEngineer, updateEngineer, assignMachine } = useMachines();
+  const { engineers, machines, addEngineer, updateEngineer, assignMachine } = useStore();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
 
   const openAdd = () => { setEditId(null); setName(""); setPhone(""); setDialogOpen(true); };
-  const openEdit = (e: Engineer) => { setEditId(e.id); setName(e.name); setPhone(e.phone); setDialogOpen(true); };
+  const openEdit = (e: typeof engineers[0]) => { setEditId(e.id); setName(e.name); setPhone(e.phone); setDialogOpen(true); };
 
   const handleSave = () => {
     if (!name.trim() || !phone.trim()) return;

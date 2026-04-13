@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
-import { useMachines, useSensorHistory } from "@/lib/store";
+import { useStore } from "@/lib/StoreContext";
+import { useSensorHistory } from "@/lib/store";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +15,7 @@ const severityColor: Record<string, string> = {
 
 export default function MachineDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { machines } = useMachines();
+  const { machines } = useStore();
   const machine = machines.find((m) => m.id === id);
   const history = useSensorHistory(id || "", machines);
 
@@ -42,7 +43,6 @@ export default function MachineDetailPage() {
         </Badge>
       </div>
 
-      {/* Live sensors */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         {[
           { label: "Temperature", value: `${machine.sensors.temperature}°C` },
@@ -57,7 +57,6 @@ export default function MachineDetailPage() {
         ))}
       </div>
 
-      {/* Chart */}
       <div className="card-elevated p-5">
         <h3 className="font-heading font-semibold text-foreground mb-4">Sensor Trends</h3>
         <div className="h-72">

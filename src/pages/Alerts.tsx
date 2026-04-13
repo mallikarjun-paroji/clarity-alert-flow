@@ -1,9 +1,9 @@
 import AppLayout from "@/components/AppLayout";
 import AlertList from "@/components/AlertList";
-import { useMachines } from "@/lib/store";
+import { useStore } from "@/lib/StoreContext";
 
 export default function Alerts() {
-  const { alerts } = useMachines();
+  const { alerts } = useStore();
 
   return (
     <AppLayout>
