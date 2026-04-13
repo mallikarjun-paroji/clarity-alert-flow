@@ -2,7 +2,20 @@ import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, 
 import { XOctagon } from "lucide-react";
 import { Alert } from "@/lib/store";
 
-export default function CriticalModal({ alert, onDismiss }: { alert: Alert | null; onDismiss: () => void }) {
+interface CriticalModalProps {
+  alert: Alert | null;
+  onDismiss: () => void;
+  onAcknowledge?: (machineId: string) => void;
+}
+
+export default function CriticalModal({ alert, onDismiss, onAcknowledge }: CriticalModalProps) {
+  const handleAcknowledge = () => {
+    if (alert && onAcknowledge) {
+      onAcknowledge(alert.machineId);
+    }
+    onDismiss();
+  };
+
   return (
     <AlertDialog open={!!alert} onOpenChange={() => onDismiss()}>
       <AlertDialogContent className="bg-card border-critical/30">
@@ -15,13 +28,13 @@ export default function CriticalModal({ alert, onDismiss }: { alert: Alert | nul
           </div>
           <AlertDialogDescription className="text-muted-foreground mt-2 space-y-2">
             <p className="font-medium text-foreground">{alert?.machineId} — {alert?.message}</p>
-            <p>Critical issue detected. Engineer is being notified.</p>
+            <p>Critical issue detected. Engineer will be called upon acknowledgement.</p>
             <p className="text-xs">{alert?.timestamp.toLocaleString()}</p>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogAction className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={onDismiss}>
-            Acknowledge
+          <AlertDialogAction className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={handleAcknowledge}>
+            Acknowledge & Call Engineer
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

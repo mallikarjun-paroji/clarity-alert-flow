@@ -7,16 +7,27 @@ import { useStore } from "@/lib/StoreContext";
 import AppLayout from "@/components/AppLayout";
 
 export default function Index() {
-  const { machines, alerts, callEscalation, newAlert, criticalAlert, dismissCritical, dismissToast } = useStore();
+  const { machines, alerts, callEscalation, smsEscalation, newAlert, criticalAlert, dismissCritical, dismissToast, triggerCall, triggerSms } = useStore();
+
+  const handleMediumDismiss = () => {
+    if (newAlert) {
+      triggerSms(newAlert.machineId, newAlert.message);
+    }
+    dismissToast();
+  };
+
+  const handleCriticalAcknowledge = (machineId: string) => {
+    triggerCall(machineId);
+  };
 
   return (
     <AppLayout>
-      <ToastAlert alert={newAlert} onDismiss={dismissToast} />
-      <CriticalModal alert={criticalAlert} onDismiss={dismissCritical} />
+      <ToastAlert alert={newAlert} onDismiss={handleMediumDismiss} />
+      <CriticalModal alert={criticalAlert} onDismiss={dismissCritical} onAcknowledge={handleCriticalAcknowledge} />
 
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="flex-1 space-y-6">
-          <CallEscalationPanel escalation={callEscalation} />
+          <CallEscalationPanel escalation={callEscalation} smsEscalation={smsEscalation} />
           <div>
             <h2 className="font-heading font-semibold text-lg text-foreground mb-4">Machine Overview</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
