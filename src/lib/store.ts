@@ -87,7 +87,6 @@ export function useMachines() {
   const [smsEscalation, setSmsEscalation] = useState<SmsEscalation | null>(null);
   const [newAlert, setNewAlert] = useState<Alert | null>(null);
   const [criticalAlert, setCriticalAlert] = useState<Alert | null>(null);
-  const [criticalAlert, setCriticalAlert] = useState<Alert | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
 
   const simulateUpdate = useCallback(() => {
