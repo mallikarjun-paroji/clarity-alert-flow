@@ -8,6 +8,7 @@ import Index from "./pages/Index.tsx";
 import Alerts from "./pages/Alerts.tsx";
 import Engineers from "./pages/Engineers.tsx";
 import MachineDetail from "./pages/MachineDetail.tsx";
+import EngineerProfile from "./pages/EngineerProfile.tsx";
 import Login from "./pages/Login.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
