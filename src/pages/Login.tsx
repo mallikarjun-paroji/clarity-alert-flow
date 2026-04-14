@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 function CircularStrips({ active }: { active: boolean }) {
-  const totalStrips = 32;
-  const radius = 210;
+  const totalStrips = 36;
+  const radius = 270;
 
   return (
     <div
@@ -28,9 +28,9 @@ function CircularStrips({ active }: { active: boolean }) {
               key={i}
               className="absolute left-1/2 top-0"
               style={{
-                width: 4,
-                height: 20,
-                marginLeft: -2,
+              width: 5,
+              height: 26,
+              marginLeft: -2.5,
                 borderRadius: 3,
                 backgroundColor: `hsl(25 30% 30%)`,
                 opacity,
