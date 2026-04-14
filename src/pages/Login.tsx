@@ -4,6 +4,47 @@ import { Activity, LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+function CircularStrips({ active }: { active: boolean }) {
+  const totalStrips = 32;
+  const radius = 210;
+
+  return (
+    <div
+      className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-500 ${
+        active ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      <div
+        className={`relative ${active ? "animate-spin-slow" : ""}`}
+        style={{ width: radius * 2, height: radius * 2 }}
+      >
+        {Array.from({ length: totalStrips }).map((_, i) => {
+          const angle = (360 / totalStrips) * i;
+          const progress = i / totalStrips;
+          // Gradient from primary brown to faded
+          const opacity = active ? 0.15 + progress * 0.85 : 0.1;
+          return (
+            <div
+              key={i}
+              className="absolute left-1/2 top-0"
+              style={{
+                width: 4,
+                height: 20,
+                marginLeft: -2,
+                borderRadius: 3,
+                backgroundColor: `hsl(25 30% 30%)`,
+                opacity,
+                transform: `rotate(${angle}deg)`,
+                transformOrigin: `center ${radius}px`,
+              }}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -26,18 +67,11 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="relative">
-        {/* Spinning ring loader around the card */}
-        <div
-          className={`absolute -inset-4 rounded-2xl border-[3px] border-transparent transition-opacity duration-500 ${
-            loading
-              ? "opacity-100 animate-spin-slow border-t-primary border-r-primary/40 border-b-primary/10 border-l-primary/60"
-              : "opacity-0"
-          }`}
-          style={{ borderRadius: "1.25rem" }}
-        />
+      <div className="relative flex items-center justify-center">
+        {/* Circular strip loader */}
+        <CircularStrips active={loading} />
 
-        <div className="card-elevated p-8 w-full max-w-sm animate-fade-in relative overflow-hidden">
+        <div className="card-elevated p-8 w-full max-w-sm animate-fade-in relative z-10">
           <div className="flex items-center gap-2 justify-center mb-6">
             <Activity className="h-7 w-7 text-primary" />
             <span className="font-heading font-semibold text-xl text-foreground">PredictAI</span>
